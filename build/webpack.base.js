@@ -3,16 +3,36 @@ webpack 基础配置
  */
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
 const webpack = require('webpack');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const HappyPack = require('happypack');
+const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
+const WebpackBar = require('webpackbar');
 
 const devMode = process.env.NODE_ENV !== 'production';
 
 // webpack 插件
 const plugins = [
+    new WebpackBar(),
+    new HappyPack({
+        id: 'js',
+        loaders: [
+            'babel-loader',
+            {
+                loader: 'eslint-loader',
+                options: {
+                    formatter: require('eslint-friendly-formatter'),
+                    fix: true
+                }
+            }
+        ],
+        threadPool: happyThreadPool,
+        verbose: true,
+    }),
     new HtmlWebpackPlugin({
         template: 'src/index.html' // 指定模板
     }),
@@ -27,16 +47,16 @@ const dllFiles = fs.readdirSync(path.resolve(__dirname, '../lib'));
 dllFiles.forEach(file => {
     if (/.*\.dll.js/.test(file)) {
         plugins.push(
-            new AddAssetHtmlWebpackPlugin({ // 添加静态文件
-                filepath: path.resolve(__dirname, '../lib', file)
-            })
+          new AddAssetHtmlWebpackPlugin({
+              filepath: path.resolve(__dirname, '../lib', file)
+          })
         );
     }
     if (/.*\.manifest.json/.test(file)) {
         plugins.push(
-            new webpack.DllReferencePlugin({
-                manifest: path.resolve(__dirname, '../lib', file)
-            })
+          new webpack.DllReferencePlugin({
+              manifest: path.resolve(__dirname, '../lib', file)
+          })
         );
     }
 });
@@ -45,7 +65,7 @@ module.exports = {
     mode: devMode ? 'development' : 'production',
     devtool: devMode ? 'cheap-module-eval-source-map' : 'cheap-module-source-map',
     entry: {
-        main: './src/index.js',
+        main: './src/main.js',
     },
     output: {
         filename: devMode ? 'js/[name].js' : 'js/[name].[contenthash:8].js',
@@ -68,7 +88,7 @@ module.exports = {
                         loader: 'css-loader',
                         options: {
                             importLoaders: 2,
-                            modules: true,
+                            modules: true
                         }
                     },
                     'sass-loader',
@@ -98,15 +118,7 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                use: [
-                    'babel-loader',
-                    {
-                        loader: 'eslint-loader',
-                        options: {
-                            fix: true
-                        }
-                    }
-                ]
+                loader: 'happypack/loader?id=js',
             },
             {
                 test: /\.vue$/,
@@ -119,6 +131,7 @@ module.exports = {
     },
     plugins: plugins,
     optimization: {
+        minimize: !devMode,
         splitChunks: {
             chunks: 'all',
             minSize: 30000,

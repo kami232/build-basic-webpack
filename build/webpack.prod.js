@@ -3,7 +3,7 @@
  */
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack.base.js');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
 
@@ -13,8 +13,23 @@ const prodConfig = {
     ],
     optimization: {
         minimizer: [
-            new TerserJSPlugin({}),
-            new OptimizeCSSAssetsPlugin({})
+            new TerserJSPlugin({
+                parallel: 4,
+                cache: true,
+                terserOptions: {
+                    compress: {
+                        pure_funcs: ["console.log"]
+                    },
+                    output: {
+                        comments: false
+                    }
+                }
+            }),
+            new OptimizeCSSAssetsPlugin({
+                cssProcessorOptions: {
+                    preset: ['default', { discardComments: { removeAll: true } }]
+                }
+            })
         ],
         // splitChunks: {
         //     cacheGroups: {
@@ -26,7 +41,7 @@ const prodConfig = {
         //         },
         //     }
         // }
-    },
+    }
 };
 
 module.exports = merge(baseConfig, prodConfig);

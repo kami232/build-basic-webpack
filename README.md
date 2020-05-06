@@ -1,7 +1,7 @@
 # build-basic-webpack
 基于webpack打包快速搭建简单项目
 
-# 项目依赖
+# 使用
 打包使用：
 1. 首先在 `webpack.dll.js` 文件下配置要独立打包的第三方模块。
 2. 使用 `npm run build-dll` 命令打包第三方模块。
@@ -9,44 +9,26 @@
 
 - 该配置默认使用了 `vue` 框架/ `sass`/ `eslint` / `lodash` 库
 
-```json
-"devDependencies": {
-    "@babel/core": "^7.6.4",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0", // 异步加载
-    "@babel/plugin-transform-runtime": "^7.6.2",
-    "@babel/preset-env": "^7.6.3",
-    "autoprefixer": "^9.7.1", // 自动添加css兼容前缀
-    "babel-loader": "^8.0.6",
-    "clean-webpack-plugin": "^3.0.0", // 删除打包文件
-    "cross-env": "^6.0.3", // 区分环境统一
-    "css-loader": "^3.2.0",
-    "eslint": "^6.6.0", // 代码风格检查
-    "eslint-loader": "^3.0.2",
-    "eslint-plugin-vue": "^5.2.3",
-    "file-loader": "^4.2.0",
-    "html-webpack-plugin": "^3.2.0", // 生成html模板
-    "mini-css-extract-plugin": "^0.8.0", // 提取css
-    "node-sass": "^4.13.0", // sass
-    "optimize-css-assets-webpack-plugin": "^5.0.3", // css压缩
-    "postcss-loader": "^3.0.0", 
-    "sass-loader": "^8.0.0",
-    "style-loader": "^1.0.0",
-    "terser-webpack-plugin": "^2.2.1", // js 压缩
-    "url-loader": "^2.2.0",
-    "vue": "^2.6.10",
-    "vue-loader": "^15.7.2",
-    "vue-template-compiler": "^2.6.10", 
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0",
-    "webpack-merge": "^4.2.2" // 合并webpack配置
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.6.3",
-    "@babel/runtime-corejs2": "^7.6.3",
-    "add-asset-html-webpack-plugin": "^3.1.3", // 添加静态资源
-    "lodash": "^4.17.15" // ladash 库
-  }
+
+
+项目目录
+
+```
+|- dist 打包后的文件
+|- build 配置文件
+|- src
+|	|-assets
+|	|-components
+|	|-pages
+|	|-router
+|	|-static
+|	|-store
+|	|-App.vue
+|	|-index.html
+|	|-main.js
+|-.babelrc babel配置
+|-.eslintrc.js eslint配置
+|-postcss.config.js
 ```
 
 # 优化
